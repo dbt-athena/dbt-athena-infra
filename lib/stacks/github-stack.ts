@@ -76,7 +76,7 @@ export class GithubStack extends Stack {
                     'athena:StartQueryExecution',
                     'athena:StopQueryExecution',
                 ],
-                resources: [`arn:aws:athena:${Aws.REGION}:${Aws.ACCOUNT_ID}:workgroup/${this.props.workGroupName}`],
+                resources: [`arn:aws:athena:*:${Aws.ACCOUNT_ID}:workgroup/${this.props.workGroupName}`],
             }),
         );
 
