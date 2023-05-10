@@ -21,7 +21,7 @@ export class AthenaStack extends Stack {
             lifecycleRules: [{ expiration: Duration.days(7) }],
         });
 
-        new PrivateBucket(this, 'AthenaQueryResults', {
+        const athenaQueryResultsBucket = new PrivateBucket(this, 'AthenaQueryResults', {
             bucketName: `dbt-athena-query-results-${Aws.REGION}`,
             lifecycleRules: [{ expiration: Duration.days(7) }],
         });
@@ -34,6 +34,9 @@ export class AthenaStack extends Stack {
             workGroupConfiguration: {
                 bytesScannedCutoffPerQuery: Size.gibibytes(10).toBytes(),
                 publishCloudWatchMetricsEnabled: true,
+                resultConfiguration: {
+                    outputLocation: `s3://${athenaQueryResultsBucket.bucketName}/${workGroupName}/`,
+                },
             },
         });
 

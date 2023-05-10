@@ -23,3 +23,6 @@ jobs:
       - name: Test S3
         run: |
           aws s3 ls s3://dbt-athena-query-results-eu-central-1 --recursive --human-readable --summarize
+      - name: Test Athena
+        run: |
+          aws athena start-query-execution --query-string "SHOW DATABASES" --work-group "athena-dbt-tests"
