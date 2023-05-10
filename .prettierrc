@@ -1,0 +1,28 @@
+{
+    "semi": true,
+    "trailingComma": "all",
+    "singleQuote": true,
+    "printWidth": 120,
+    "tabWidth": 4,
+    "importOrder": [
+        "^constructs(.*)$",
+        "^aws-cdk(.*)$",
+        "^@aws-cdk(.*)$",
+        "^@aws-sdk(.*)$",
+        "^test/(.*)$",
+        "^[./]"
+    ],
+    "importOrderSeparation": true,
+    "overrides": [
+        {
+            "files": [
+                "**/*.json",
+                "**/*.yml"
+            ],
+            "options": {
+                "singleQuote": false,
+                "tabWidth": 2
+            }
+        }
+    ]
+}
