@@ -1,0 +1,18 @@
+jobs:
+  deploy:
+    name: Test Action
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS credentials from Test account
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${AWS_ACCOUNT_ID}:role/${ASSUMABLE_ROLE_NAME}
+          aws-region: eu-central-1
+      - name: Test S3
+        run: |
+          aws s3 ls  --recursive --human-readable --summarize

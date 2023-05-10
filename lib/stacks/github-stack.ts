@@ -18,16 +18,21 @@ interface RepositoryConfig {
 }
 
 /**
+ * Create IAM role to be assumed by Github action using OpenID Connect
  * https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
+ *
  * https://towardsthecloud.com/aws-cdk-openid-connect-github
- * https://github.com/aws-actions/configure-aws-credentials
  *
  */
 export class GithubStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps) {
         super(scope, id, props);
 
-        const repositoryConfig: RepositoryConfig[] = [{ owner: 'dbt-athena', repo: 'dbt-athena' }];
+        const repositoryOwner = 'dbt-athena';
+        const repositoryConfig: RepositoryConfig[] = [
+            { owner: repositoryOwner, repo: 'dbt-athena' },
+            { owner: repositoryOwner, repo: 'dbt-athena-infra' },
+        ];
 
         const githubDomain = 'token.actions.githubusercontent.com';
 
@@ -44,12 +49,13 @@ export class GithubStack extends Stack {
         const conditions: Conditions = {
             StringLike: {
                 [`${githubDomain}:sub`]: iamRepoDeployAccess,
+                'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
             },
         };
 
         const githubAssumableRole = new Role(this, 'GithubAssumableRole', {
             assumedBy: new WebIdentityPrincipal(ghProvider.openIdConnectProviderArn, conditions),
-            roleName: 'exampleGitHubDeployRole',
+            roleName: 'github-assumable-role',
             description:
                 'This role is used via GitHub Actions to deploy with AWS CDK or Terraform on the target AWS account',
             maxSessionDuration: cdk.Duration.hours(1),
