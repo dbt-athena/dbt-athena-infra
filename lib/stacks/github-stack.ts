@@ -17,15 +17,18 @@ interface RepositoryConfig {
     filter?: string;
 }
 
+/**
+ * https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
+ * https://towardsthecloud.com/aws-cdk-openid-connect-github
+ * https://github.com/aws-actions/configure-aws-credentials
+ *
+ */
 export class GithubStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
         const repositoryConfig: RepositoryConfig[] = [{ owner: 'dbt-athena', repo: 'dbt-athena' }];
 
-        // https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
-        // https://towardsthecloud.com/aws-cdk-openid-connect-github
-        // https://github.com/aws-actions/configure-aws-credentials
         const githubDomain = 'token.actions.githubusercontent.com';
 
         const ghProvider = new OpenIdConnectProvider(this, 'GithubProvider', {

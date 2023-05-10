@@ -6,6 +6,9 @@ import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
 
 import { PrivateBucket } from '../constructs/s3/private-bucket';
 
+/**
+ *
+ */
 export class AthenaStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
@@ -23,7 +26,7 @@ export class AthenaStack extends cdk.Stack {
                 bytesScannedCutoffPerQuery: Size.gibibytes(10).toBytes(),
                 enforceWorkGroupConfiguration: true,
                 resultConfiguration: {
-                    outputLocation: `s3://${athenaQueryResultsBucket.bucketName/}`,
+                    outputLocation: `s3://${athenaQueryResultsBucket.bucketName}/`,
                 },
                 publishCloudWatchMetricsEnabled: false,
             },
