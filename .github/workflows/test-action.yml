@@ -1,5 +1,12 @@
+name: test-action
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
 jobs:
-  deploy:
+  test-s3:
     name: Test Action
     runs-on: ubuntu-latest
     permissions:
@@ -15,4 +22,4 @@ jobs:
           aws-region: eu-central-1
       - name: Test S3
         run: |
-          aws s3 ls  --recursive --human-readable --summarize
+          aws s3 ls --recursive --human-readable --summarize
