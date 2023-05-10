@@ -12,7 +12,7 @@ function main() {
     const stackProps = {
         env: {
             account: process.env.CDK_DEFAULT_ACCOUNT,
-            region: process.env.CDK_DEFAULT_REGION,
+            region: 'eu-central-1', // Use Frankfurt as main region
         },
     };
 

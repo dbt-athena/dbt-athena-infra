@@ -1,7 +1,7 @@
 import { Construct } from 'constructs';
 
 import * as cdk from 'aws-cdk-lib';
-import { StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
 import {
     Conditions,
     Effect,
@@ -23,7 +23,7 @@ interface RepositoryConfig {
  * https://github.com/aws-actions/configure-aws-credentials
  *
  */
-export class GithubStack extends cdk.Stack {
+export class GithubStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
@@ -58,6 +58,7 @@ export class GithubStack extends cdk.Stack {
         githubAssumableRole.addToPolicy(this.createAthenaTestPolicy());
     }
     private createAthenaTestPolicy(): PolicyStatement {
+        // TODO use https://dbt-athena.github.io/docs/getting-started/prerequisites/iam-permissions
         return new PolicyStatement({
             effect: Effect.ALLOW,
             actions: ['lakeformation:*', 'glue:*', 'athena:*'],
