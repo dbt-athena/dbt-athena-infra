@@ -2,21 +2,28 @@
 import 'source-map-support/register';
 
 import * as cdk from 'aws-cdk-lib';
-import { StackProps } from 'aws-cdk-lib';
+import { Stack, Tags } from 'aws-cdk-lib';
 
-import { AthenaStack } from '../lib/stacks/athena-stack';
+import { allStacks } from '../lib/stacks/stacks';
 
-const app = new cdk.App();
+function main() {
+    const app = new cdk.App();
 
-const account = process.env.CDK_DEFAULT_ACCOUNT;
-const region = process.env.CDK_DEFAULT_REGION;
+    const stackProps = {
+        env: {
+            account: process.env.CDK_DEFAULT_ACCOUNT,
+            region: process.env.CDK_DEFAULT_REGION,
+        },
+    };
 
-const stackProps: StackProps = { env: { account, region } };
-
-const regions = ['us-east-1', 'eu-west-1', 'eu-west-2', 'eu-central-1'];
-
-regions.forEach((region) => {
-    new AthenaStack(app, `${AthenaStack.name}-${region}`, {
-        env: { account, region },
+    const stacks = allStacks(app, stackProps);
+    stacks.forEach((stack: Stack) => {
+        addTags(stack);
     });
-});
+}
+
+function addTags(stack: Stack): void {
+    Tags.of(stack).add('project', 'dbt-athena-infra');
+}
+
+main();
