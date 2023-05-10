@@ -22,4 +22,4 @@ jobs:
           aws-region: eu-central-1
       - name: Test S3
         run: |
-          aws s3 ls --recursive --human-readable --summarize
+          aws s3 ls s3://dbt-athena-query-results-eu-central-1 --recursive --human-readable --summarize
