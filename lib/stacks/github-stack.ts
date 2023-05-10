@@ -1,7 +1,6 @@
 import { Construct } from 'constructs';
 
-import * as cdk from 'aws-cdk-lib';
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { Aws, Duration, Stack, StackProps } from 'aws-cdk-lib';
 import {
     Conditions,
     Effect,
@@ -17,6 +16,10 @@ interface RepositoryConfig {
     filter?: string;
 }
 
+interface GithubStackProps extends StackProps {
+    workGroupName: string;
+}
+
 /**
  * Create IAM role to be assumed by Github action using OpenID Connect
  * https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
@@ -25,7 +28,7 @@ interface RepositoryConfig {
  *
  */
 export class GithubStack extends Stack {
-    constructor(scope: Construct, id: string, props: StackProps) {
+    constructor(scope: Construct, id: string, private readonly props: GithubStackProps) {
         super(scope, id, props);
 
         const repositoryOwner = 'dbt-athena';
@@ -58,7 +61,7 @@ export class GithubStack extends Stack {
             roleName: 'github-assumable-role',
             description:
                 'This role is used via GitHub Actions to deploy with AWS CDK or Terraform on the target AWS account',
-            maxSessionDuration: cdk.Duration.hours(1),
+            maxSessionDuration: Duration.hours(1),
         });
 
         // https://dbt-athena.github.io/docs/getting-started/prerequisites/iam-permissions
@@ -73,7 +76,7 @@ export class GithubStack extends Stack {
                     'athena:StartQueryExecution',
                     'athena:StopQueryExecution',
                 ],
-                resources: ['*'],
+                resources: [`arn:aws:athena:${Aws.REGION}:${Aws.ACCOUNT_ID}:workgroup/${this.props.workGroupName}`],
             }),
         );
 
@@ -130,7 +133,7 @@ export class GithubStack extends Stack {
                     's3:ListMultipartUploadParts',
                     's3:PutObject',
                 ],
-                resources: ['*'],
+                resources: ['arn:aws:s3:::dbt-athena*'],
             }),
         );
 

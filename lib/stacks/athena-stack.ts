@@ -1,18 +1,21 @@
 import { Construct } from 'constructs';
 
-import * as cdk from 'aws-cdk-lib';
-import { Aws, Duration, Size, Stack } from 'aws-cdk-lib';
+import { Aws, Duration, Size, Stack, StackProps } from 'aws-cdk-lib';
 import { CfnWorkGroup } from 'aws-cdk-lib/aws-athena';
 
 import { Database } from '@aws-cdk/aws-glue-alpha';
 
 import { PrivateBucket } from '../constructs/s3/private-bucket';
 
+interface AthenaStackProps extends StackProps {
+    workGroupName: string;
+}
+
 /**
  *
  */
 export class AthenaStack extends Stack {
-    constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+    constructor(scope: Construct, id: string, private readonly props: AthenaStackProps) {
         super(scope, id, props);
 
         //  Buckets
@@ -27,15 +30,14 @@ export class AthenaStack extends Stack {
         });
 
         // Athena
-        const workGroupName = 'athena-dbt-tests';
-        new CfnWorkGroup(this, `Workgroup-${workGroupName}`, {
-            name: workGroupName,
+        new CfnWorkGroup(this, `Workgroup-${this.props.workGroupName}`, {
+            name: this.props.workGroupName,
             state: 'ENABLED',
             workGroupConfiguration: {
                 bytesScannedCutoffPerQuery: Size.gibibytes(10).toBytes(),
                 publishCloudWatchMetricsEnabled: true,
                 resultConfiguration: {
-                    outputLocation: `s3://${athenaQueryResultsBucket.bucketName}/${workGroupName}/`,
+                    outputLocation: `s3://${athenaQueryResultsBucket.bucketName}/${this.props.workGroupName}/`,
                 },
             },
         });
