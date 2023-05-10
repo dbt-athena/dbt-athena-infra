@@ -24,7 +24,7 @@ interface RepositoryConfig {
  *
  */
 export class GithubStack extends Stack {
-    constructor(scope: Construct, id: string, props?: StackProps) {
+    constructor(scope: Construct, id: string, props: StackProps) {
         super(scope, id, props);
 
         const repositoryConfig: RepositoryConfig[] = [{ owner: 'dbt-athena', repo: 'dbt-athena' }];
@@ -55,14 +55,95 @@ export class GithubStack extends Stack {
             maxSessionDuration: cdk.Duration.hours(1),
         });
 
-        githubAssumableRole.addToPolicy(this.createAthenaTestPolicy());
-    }
-    private createAthenaTestPolicy(): PolicyStatement {
-        // TODO use https://dbt-athena.github.io/docs/getting-started/prerequisites/iam-permissions
-        return new PolicyStatement({
-            effect: Effect.ALLOW,
-            actions: ['lakeformation:*', 'glue:*', 'athena:*'],
-            resources: ['*'],
-        });
+        // https://dbt-athena.github.io/docs/getting-started/prerequisites/iam-permissions
+        // Athena
+        githubAssumableRole.addToPolicy(
+            new PolicyStatement({
+                effect: Effect.ALLOW,
+                actions: [
+                    'athena:GetQueryExecution',
+                    'athena:GetQueryResults',
+                    'athena:GetWorkGroup',
+                    'athena:StartQueryExecution',
+                    'athena:StopQueryExecution',
+                ],
+                resources: ['*'],
+            }),
+        );
+
+        // Glue
+        githubAssumableRole.addToPolicy(
+            new PolicyStatement({
+                effect: Effect.ALLOW,
+                actions: [
+                    'glue:BatchCreatePartition',
+                    'glue:BatchDeletePartition',
+                    'glue:BatchDeleteTable',
+                    'glue:BatchDeleteTableVersion',
+                    'glue:BatchUpdatePartition',
+                    'glue:CreatePartition',
+                    'glue:CreateTable',
+                    'glue:DeletePartition',
+                    'glue:DeleteTable',
+                    'glue:DeleteTableVersion',
+                    'glue:GetDatabase',
+                    'glue:GetDatabase',
+                    'glue:GetDatabases',
+                    'glue:GetDatabases',
+                    'glue:GetPartition',
+                    'glue:GetPartition',
+                    'glue:GetPartitions',
+                    'glue:GetPartitions',
+                    'glue:GetTable',
+                    'glue:GetTable',
+                    'glue:GetTables',
+                    'glue:GetTables',
+                    'glue:UpdatePartition',
+                    'glue:UpdateTable',
+                ],
+                resources: ['*'],
+            }),
+        );
+
+        // S3
+        githubAssumableRole.addToPolicy(
+            new PolicyStatement({
+                effect: Effect.ALLOW,
+                actions: [
+                    's3:AbortMultipartUpload',
+                    's3:DeleteObject',
+                    's3:GetBucketLocation',
+                    's3:GetBucketLocation',
+                    's3:GetObject',
+                    's3:GetObject',
+                    's3:ListBucket',
+                    's3:ListBucket',
+                    's3:ListBucketMultipartUploads',
+                    's3:ListBucketMultipartUploads',
+                    's3:ListMultipartUploadParts',
+                    's3:ListMultipartUploadParts',
+                    's3:PutObject',
+                ],
+                resources: ['*'],
+            }),
+        );
+
+        // Kms
+        githubAssumableRole.addToPolicy(
+            new PolicyStatement({
+                effect: Effect.ALLOW,
+                actions: ['kms:GenerateDataKey*', 'kms:DescribeKey', 'kms:Decrypt'],
+                resources: ['*'],
+            }),
+        );
+
+        // Lake Formation
+        githubAssumableRole.addToPolicy(
+            new PolicyStatement({
+                effect: Effect.ALLOW,
+                actions: ['lakeformation:GetDataAccess'],
+                resources: ['*'],
+            }),
+        );
     }
 }
