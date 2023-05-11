@@ -92,6 +92,7 @@ export class GithubStack extends Stack {
                     'glue:CreateDatabase',
                     'glue:CreatePartition',
                     'glue:CreateTable',
+                    'glue:DeleteDatabase',
                     'glue:DeletePartition',
                     'glue:DeleteTable',
                     'glue:DeleteTableVersion',
