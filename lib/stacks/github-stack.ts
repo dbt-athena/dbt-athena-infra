@@ -59,12 +59,11 @@ export class GithubStack extends Stack {
         const githubAssumableRole = new Role(this, 'GithubAssumableRole', {
             assumedBy: new WebIdentityPrincipal(ghProvider.openIdConnectProviderArn, conditions),
             roleName: 'github-assumable-role',
-            description:
-                'This role is used via GitHub Actions to deploy with AWS CDK or Terraform on the target AWS account',
             maxSessionDuration: Duration.hours(1),
         });
 
         // https://dbt-athena.github.io/docs/getting-started/prerequisites/iam-permissions
+
         // Athena
         githubAssumableRole.addToPolicy(
             new PolicyStatement({

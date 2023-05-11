@@ -12,21 +12,18 @@ interface AthenaStackProps extends StackProps {
 }
 
 /**
- *
+ * Create resources required by Athena.
  */
 export class AthenaStack extends Stack {
     constructor(scope: Construct, id: string, private readonly props: AthenaStackProps) {
         super(scope, id, props);
 
         //  Buckets
-        new PrivateBucket(this, 'TestData', {
-            bucketName: `dbt-athena-test-data-${Aws.REGION}`,
-            lifecycleRules: [{ expiration: Duration.days(7) }],
-        });
+        new PrivateBucket(this, 'TestData', { bucketName: `dbt-athena-test-data-${Aws.REGION}` });
 
         const athenaQueryResultsBucket = new PrivateBucket(this, 'AthenaQueryResults', {
             bucketName: `dbt-athena-query-results-${Aws.REGION}`,
-            lifecycleRules: [{ expiration: Duration.days(7) }],
+            lifecycleRules: [{ expiration: Duration.days(1) }],
         });
 
         // Athena
