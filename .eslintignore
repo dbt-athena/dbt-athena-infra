@@ -1,0 +1,6 @@
+cdk.out
+coverage
+dist
+jest.config.js
+node_modules
+out
