@@ -89,6 +89,7 @@ export class GithubStack extends Stack {
                     'glue:BatchDeleteTable',
                     'glue:BatchDeleteTableVersion',
                     'glue:BatchUpdatePartition',
+                    'glue:CreateDatabase',
                     'glue:CreatePartition',
                     'glue:CreateTable',
                     'glue:DeletePartition',
