@@ -19,7 +19,9 @@ export class AthenaStack extends Stack {
         super(scope, id, props);
 
         //  Buckets
-        new PrivateBucket(this, 'TestData', { bucketName: `dbt-athena-test-data-${Aws.REGION}` });
+        const testDataBucket = new PrivateBucket(this, 'TestData', {
+            bucketName: `dbt-athena-test-data-${Aws.REGION}`,
+        });
 
         const athenaQueryResultsBucket = new PrivateBucket(this, 'AthenaQueryResults', {
             bucketName: `dbt-athena-query-results-${Aws.REGION}`,
@@ -42,6 +44,7 @@ export class AthenaStack extends Stack {
         // Glue Data Catalog
         new Database(this, Database.name, {
             databaseName: 'dbt-tests',
+            locationUri: `s3://${testDataBucket.bucketName}/dbt-tests/`,
         });
     }
 }
